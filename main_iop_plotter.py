@@ -5,7 +5,7 @@ main envelope for plotting iop profiles
 @author: vmv
 """
 
-#import IOPfromWAP as acs
+import caller_iop_plotter as caller_iop
 import matplotlib.pyplot as plt
 
 #import csv
@@ -28,7 +28,8 @@ input_folder='D:\\python_workspace\\profiles_iop\\input\\revised_optics\\'
    #output_folder = 'J:\\opticsdatabasev00\\globolakes\\2014\\ACS\\balaton\\'+dates[ndir]
 print input_folder
 print output_folder
-# do call   acs.IOPProcess_1folder(input_folder,output_folder)#,\
+
+caller_iop.iop_plotter_1folder(input_folder,output_folder)#,\
  #  quiet=False,wlpars=[400,750,3.3])
   
 #   filename = 'J:\\python_workspace\\globolakes_iop\\input\\archive_pair_02.000'

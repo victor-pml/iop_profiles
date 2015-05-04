@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 Created on 14/01/2015 pm
-
+main envelope for plotting iop profiles
 @author: vmv
 """
 
@@ -22,12 +22,13 @@ output_folder ='D:\\python_workspace\\profiles_iop\\output\\'
 #output_folder ='J:\\opticsdatabasev00\\globolakes\\2014\\ACS\\geneva\\proc_v_20150224\\'
 #for ndir in range(0,len(dates)):
 #   input_folder='J:\\opticsdatabasev00\\globolakes\\2014\\ACS\\geneva\\'+dates[ndir]
-   input_folder='D:\\python_workspace\\profiles_iop\\input\\revised_optics\\'
+'''Definition of input file'''
+input_folder='D:\\python_workspace\\profiles_iop\\input\\revised_optics\\'
   
    #output_folder = 'J:\\opticsdatabasev00\\globolakes\\2014\\ACS\\balaton\\'+dates[ndir]
-   print input_folder
-   print output_folder
-   acs.IOPProcess_1folder(input_folder,output_folder)#,\
+print input_folder
+print output_folder
+# do call   acs.IOPProcess_1folder(input_folder,output_folder)#,\
  #  quiet=False,wlpars=[400,750,3.3])
   
 #   filename = 'J:\\python_workspace\\globolakes_iop\\input\\archive_pair_02.000'

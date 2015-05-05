@@ -26,22 +26,26 @@ def _acsHeaderParse(fLines):
    '''fill header dict with info from the L2S header lines'''
    acsHeader=[]
    dict_acsHeader = []
-   headsep = ';'
+ #  headsep = ','
    llind = 0
    ll = fLines[llind]
-   while not ll.startswith('Time(ms)') or ll.startswith('Lat')  :
- #     print ll
-      headline = ll.split(headsep,1)
-      acsHeader.append(headline[0].strip())
-      llind += 1
-      ll = fLines[llind]
-   dict_acsHeader.append(dict(ver=acsHeader[0],srn=acsHeader[2],\
-                        tcl=acsHeader[4],ptl=acsHeader[7],\
-                        wln=float(acsHeader[8])))
    test = ll.strip().split('\t')
+   test = ll.split(',')
+   wlc = [412.,440.,488.,510.,532.,555.,650.,715.]
+   wla = wlc
+   #[float(val.split('c')[1]) for val in test if val.startswith('c')]
+   #wla = [float(val.split('a')[1]) for val in test if val.startswith('a')]
+ 
+#   while not ll.startswith('Lat')  :
+# #     print ll
+#      headline = ll.split(headsep,1)
+#   acsHeader.append(headline[0].strip())
+  
+#   dict_acsHeader.append(dict(ver=acsHeader[0],srn=acsHeader[2],\
+#                        tcl=acsHeader[4],ptl=acsHeader[7],\
+#                        wln=float(acsHeader[8])))
+ 
    
-   wlc = [float(val.split('c')[1]) for val in test if val.startswith('c')]
-   wla = [float(val.split('a')[1]) for val in test if val.startswith('a')]
    lines2parse = fLines [llind+1::]
    return wla,wlc,dict_acsHeader,lines2parse
  # testing Loop through the selected files to read raw data into arrays
@@ -51,13 +55,21 @@ def _acsDataParse(lines2parse,dict_acsHeader,wla,wlc):
    ms_acs = []
    c_raw = []
    a_raw = []
-   wln = int(dict_acsHeader[0]['wln'])
+   t_raw = []
+   bb_raw = []
+   s_raw = []
+   d_raw =[]
+   wln = 9  #int(dict_acsHeader[0]['wln'])
    for ll in lines2parse:
-      vals = [float(val) for val in ll.strip().split('\t')]
-      ms_acs.append(vals[0])
-      c_raw.append(vals[1:wln+1])
-      a_raw.append(vals[wln+1:(wln+1)+wln])
-   return ms_acs,c_raw,a_raw 
+      vals = [float(val) for val in ll.strip().split(',')]
+      ms_acs.append(vals[2])
+      d_raw.append (vals[3])
+      a_raw.append(vals[4:13])
+      c_raw.append(vals[13:22])
+      bb_raw.append(vals[22:25])
+      t_raw.append(vals[25])
+      s_raw.append(vals[26])
+   return ms_acs,c_raw,a_raw, d_raw,t_raw,s_raw,bb_raw 
    #plot(ms_acs,[c[10] for c in c_raw])
 ####################acs routines##############################
 ####################ctd routines#############################

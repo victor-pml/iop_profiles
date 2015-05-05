@@ -19,8 +19,8 @@ from init_txt import initialisation_txt
 
 import optics_routines as opt
 import readingIOP_profiles as rd
-import opt_functions_ac as ac_f
-import opt_functions_bb3 as bb3_f
+#import opt_functions_ac as ac_f
+#import opt_functions_bb3 as bb3_f
 import opt_functions_qc as qc_f
 import writingIOP as wr
 import opt_stats as stats
@@ -73,24 +73,24 @@ def iop_plotter_1file(ac_file,init_t_secs,output_folder,input_folder,summdir):
    
    fLines =rd._acsReadFile(ac_file)
    wla,wlc,dict_acsHeader,lines2parse =rd._acsHeaderParse(fLines)
-   ms_acs,c_raw,a_raw = rd._acsDataParse(lines2parse,dict_acsHeader,wla,wlc)
+   ms_acs,c_raw,a_raw, d_raw,t_raw,s_raw,bb_raw  = rd._acsDataParse(lines2parse,dict_acsHeader,wla,wlc)
 
-   ctd_file = files_mrg[1]
-   fLines_ctd =rd._ctdReadFile(ctd_file)
-   ms_ctd,t_raw,s_raw,d_raw =rd._ctdDataParse(fLines_ctd,ctd_col)
+  # ctd_file = files_mrg[1]
+  # fLines_ctd =rd._ctdReadFile(ctd_file)
+  # ms_ctd,t_raw,s_raw,d_raw =rd._ctdDataParse(fLines_ctd,ctd_col)
 
-   bb3_file = files_mrg[2]
-   fLines_bb3 = rd._bb3ReadFile(bb3_file)
-   ms_bb3,counts_raw,dark_raw = rd._bb3DataParse(fLines_bb3,bb3_col)
+  # bb3_file = files_mrg[2]
+  # fLines_bb3 = rd._bb3ReadFile(bb3_file)
+  # ms_bb3,counts_raw,dark_raw = rd._bb3DataParse(fLines_bb3,bb3_col)
 ####End of reading######
 
 ###Processing the data####
 ### Merge the acs and CTD####
 ### after merging, T, Sal,depth and  counts are means and stddev at the same time scales as absorption and attenuation
-   t_mrg_mean,s_mrg_mean,d_mrg_mean,t_mrg_sd,s_mrg_sd,d_mrg_sd =rd._acsctdMerge(ms_acs,c_raw,a_raw,ms_ctd,t_raw,s_raw,d_raw)
+#   t_mrg_mean,s_mrg_mean,d_mrg_mean,t_mrg_sd,s_mrg_sd,d_mrg_sd =rd._acsctdMerge(ms_acs,c_raw,a_raw,ms_ctd,t_raw,s_raw,d_raw)
 ### Merge the acs and bb####
 
-   counts_mrg_mean,counts_mrg_sd =rd._acsbb3Merge(ms_acs,a_raw,ms_bb3,counts_raw)
+ #  counts_mrg_mean,counts_mrg_sd =rd._acsbb3Merge(ms_acs,a_raw,ms_bb3,counts_raw)
 
 
 ### corrections of acs
@@ -100,20 +100,27 @@ def iop_plotter_1file(ac_file,init_t_secs,output_folder,input_folder,summdir):
   #T and sal correction and 
   #water cal if available - not implemented in 26/01/2015 processing
  
- #ideally extracted from here >>>> tcal =  dict_acsHeader[0]['tcl']
- #done a bit brutally...
-   acs_cal['tcal'] = float(dict_acsHeader[0]['tcl'][7:11])
-   acs_cal['WAPver'] = dict_acsHeader[0]['ver'][53:58]
+# #ideally extracted from here >>>> tcal =  dict_acsHeader[0]['tcl']
+# #done a bit brutally...
+#   acs_cal['tcal'] = float(dict_acsHeader[0]['tcl'][7:11])
+#   acs_cal['WAPver'] = dict_acsHeader[0]['ver'][53:58]
 
  # attenuation doing T&S correction  
-   cpd_ts = opt.opt_beam_attenuation(wlc, acs_cal,c_raw,t_mrg_mean, s_mrg_mean)
+  # cpd_ts = opt.opt_beam_attenuation(wlc, acs_cal,c_raw,t_mrg_mean, s_mrg_mean)
  # absorption doing T&S correction 
  # absorption doing scattering correction - By default using Zaneveld method
-   apd_ts_s,cpd_ts_int,bp = opt.opt_optical_absorption(wla,wlc,acs_cal,a_raw,cpd_ts,t_mrg_mean, s_mrg_mean,rwlngth=715.)
+  # apd_ts_s,cpd_ts_int,bp = opt.opt_optical_absorption(wla,wlc,acs_cal,a_raw,cpd_ts,t_mrg_mean, s_mrg_mean,rwlngth=715.)
    
-   bbp = opt.opt_optical_backscattering(wla,apd_ts_s,counts_mrg_mean,counts_mrg_sd,bb3_cal,t_mrg_mean,s_mrg_mean)
-
-   time_real = [init_t_secs+ms/1000. for ms in ms_acs]
+  # bbp = opt.opt_optical_backscattering(wla,apd_ts_s,counts_mrg_mean,counts_mrg_sd,bb3_cal,t_mrg_mean,s_mrg_mean)
+   apd_ts_s = np.array(a_raw, ndmin=3)
+   cpd_ts_int = np.array(c_raw, ndmin=3)
+   bbp = np.array(bb_raw, ndmin=3) #bb is bbp (=bb-bbw)
+   npackets = apd_ts_s.shape[1]
+   nwavelengths = apd_ts_s.shape[2] 
+   bp = np.zeros([npackets, nwavelengths])
+   for ii in range(npackets):
+       bp[ii,:] = cpd_ts_int[0][ii,:]- apd_ts_s[0][ii, :]
+   time_real = ms_acs#[init_t_secs+ms/1000. for ms in ms_acs]
 
    apd_data_valid2,cpd_data_valid2, bp_data_valid2,bbp_data_valid2=qc_f.qc_flags(wla,apd_ts_s,cpd_ts_int,bp,bbp)
 

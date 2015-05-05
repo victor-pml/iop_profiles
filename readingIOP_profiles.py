@@ -31,7 +31,7 @@ def _acsHeaderParse(fLines):
    ll = fLines[llind]
    test = ll.strip().split('\t')
    test = ll.split(',')
-   wlc = [412.,440.,488.,510.,532.,555.,650.,715.]
+   wlc = [412.,440.,488.,510.,532.,555.,650.,676.,715.]
    wla = wlc
    #[float(val.split('c')[1]) for val in test if val.startswith('c')]
    #wla = [float(val.split('a')[1]) for val in test if val.startswith('a')]

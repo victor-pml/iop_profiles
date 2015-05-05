@@ -21,7 +21,7 @@ import optics_routines as opt
 import readingIOP_profiles as rd
 #import opt_functions_ac as ac_f
 #import opt_functions_bb3 as bb3_f
-import opt_functions_qc as qc_f
+import opt_functions_qc_profiles as qc_f
 import writingIOP as wr
 import opt_stats as stats
 import matplotlib.pyplot as plt
@@ -122,12 +122,12 @@ def iop_plotter_1file(ac_file,init_t_secs,output_folder,input_folder,summdir):
        bp[ii,:] = cpd_ts_int[0][ii,:]- apd_ts_s[0][ii, :]
    time_real = ms_acs#[init_t_secs+ms/1000. for ms in ms_acs]
 
-   apd_data_valid2,cpd_data_valid2, bp_data_valid2,bbp_data_valid2=qc_f.qc_flags(wla,apd_ts_s,cpd_ts_int,bp,bbp)
+   apd_data_valid2,cpd_data_valid2, bp_data_valid2,bbp_data_valid2,d_data_valid2,t_data_valid2,s_data_valid2=qc_f.qc_flags(wla,apd_ts_s,cpd_ts_int,bp,bbp,d_raw,t_raw,s_raw)
 
    
-   iopstats =stats.dataStats(apd_data_valid2,cpd_data_valid2, bp_data_valid2,bbp_data_valid2,time_real,t_raw,s_raw,d_raw)      
+   iopstats =stats.dataStats(apd_data_valid2,cpd_data_valid2, bp_data_valid2,bbp_data_valid2,time_real,t_data_valid2,s_data_valid2,d_data_valid2)      
     
-   wr.writeOutputAll(summdir,acs_file,wla,bb3_cal,acs_cal,parameters,apd_ts_s,cpd_ts_int,bp,bbp,time_real,t_mrg_mean,s_mrg_mean,d_mrg_mean)
+   wr.writeOutputAll(output_folder,ac_file,wla,bb3_cal,ac_cal,parameters,apd_ts_s,cpd_ts_int,bp,bbp,time_real,t_raw,s_raw,d_raw)
    
   # wr.summaryPlot(acs_file,apd_data_valid2,cpd_data_valid2, bp_data_valid2,bbp_data_valid2,time_real,t_mrg_mean,s_mrg_mean,d_mrg_mean,wla,bb3_cal,iopstats,summdir,saveplt=True)
 
